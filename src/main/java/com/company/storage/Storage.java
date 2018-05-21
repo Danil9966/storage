@@ -23,16 +23,24 @@ public class Storage {
 
     @SneakyThrows
      public String getString() {
-        numOfReader++;
+        String result = new String(this.string) ;
+        incNumOfReaders();
         TimeUnit.SECONDS.sleep(1);
-        numOfReader--;
+        decNumOfReaders();
         synchronized (SYNCHRO) {
-            SYNCHRO.notify();
+            SYNCHRO.notifyAll();
         }
-        return string;
+        return result;
 
     }
+    synchronized void incNumOfReaders(){
+        numOfReader++;
 
+    }
+    synchronized void decNumOfReaders(){
+        numOfReader--;
+
+    }
 
     boolean isReadersPresent(){
         return numOfReader>0;
