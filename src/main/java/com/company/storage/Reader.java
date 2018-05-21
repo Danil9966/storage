@@ -1,5 +1,7 @@
 package com.company.storage;
 
+import lombok.SneakyThrows;
+
 import java.util.concurrent.TimeUnit;
 
 public class Reader implements Runnable {
@@ -11,15 +13,12 @@ public class Reader implements Runnable {
     }
 
     @Override
+    @SneakyThrows
     public void run() {
         String threadName = Thread.currentThread().getName();
-        for (int i = 0; i < 10; ++i) {
-            try {
-                System.out.println(threadName + " - " + i + " - " + storage.getString());
-                TimeUnit.MILLISECONDS.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        for (int i = 0; i < 15; ++i) {
+            System.out.println(threadName + " - " + i + " - " + storage.getString());
+            TimeUnit.MILLISECONDS.sleep(500);
         }
     }
 }
