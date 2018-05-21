@@ -7,23 +7,34 @@ import java.util.concurrent.TimeUnit;
 public class Storage {
 
     private volatile String string = "DEAFAULT";
-
-    private volatile int numOfReaders = 0;
+    private volatile Integer numOfReader= 0;
+    private final Object SYNCHRO =new Object();
     @SneakyThrows
      public void setString(String newValue)  {
-       {
-           synchronized (string) {
-               TimeUnit.SECONDS.sleep(1);
-               string = newValue;
-           }
-        }
-    }
-    @SneakyThrows
-     public String getString() {
+
+        synchronized (SYNCHRO) {
+            while (isReadersPresent())
+                SYNCHRO.wait();
 
            TimeUnit.SECONDS.sleep(1);
-           return string;
-
+           string = newValue;
         }
+    }
+
+    @SneakyThrows
+     public String getString() {
+        numOfReader++;
+        TimeUnit.SECONDS.sleep(1);
+        numOfReader--;
+        synchronized (SYNCHRO) {
+            SYNCHRO.notify();
+        }
+        return string;
 
     }
+
+
+    boolean isReadersPresent(){
+        return numOfReader>0;
+    }
+}
