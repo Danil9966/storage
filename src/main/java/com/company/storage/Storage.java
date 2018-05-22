@@ -6,16 +6,14 @@ import java.util.concurrent.TimeUnit;
 
 public class Storage {
 
-    private volatile String string = "DEAFAULT";
-    private volatile Integer numOfReader= 0;
-    private final Object SYNCHRO =new Object();
+    private volatile String string = "DEFAULT";
+    private volatile int numOfReader = 0;
+    private final Object SYNCHRO = new Object();
     @SneakyThrows
      public void setString(String newValue)  {
-
         synchronized (SYNCHRO) {
             while (isReadersPresent())
                 SYNCHRO.wait();
-
            TimeUnit.SECONDS.sleep(1);
            string = newValue;
         }
@@ -28,21 +26,26 @@ public class Storage {
         TimeUnit.SECONDS.sleep(1);
         decNumOfReaders();
         synchronized (SYNCHRO) {
-            SYNCHRO.notifyAll();
+            if(numOfReader == 0) {
+                SYNCHRO.notifyAll();
+            }
         }
         return result;
-
     }
-    synchronized void incNumOfReaders(){
-        numOfReader++;
 
+    void incNumOfReaders(){
+        synchronized (SYNCHRO) {
+            numOfReader++;
+        }
     }
-    synchronized void decNumOfReaders(){
-        numOfReader--;
 
+    void decNumOfReaders(){
+        synchronized (SYNCHRO) {
+            numOfReader--;
+        }
     }
 
     boolean isReadersPresent(){
-        return numOfReader>0;
+        return numOfReader > 0;
     }
 }
