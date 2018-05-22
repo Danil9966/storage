@@ -27,7 +27,7 @@ public class Storage {
         decNumOfReaders();
         synchronized (SYNCHRO) {
             if(numOfReader == 0) {
-                SYNCHRO.notifyAll();
+                SYNCHRO.notify();
             }
         }
         return result;
