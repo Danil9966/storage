@@ -25,8 +25,8 @@ public class Storage {
         incNumOfReaders();
         TimeUnit.SECONDS.sleep(1);
         decNumOfReaders();
-        synchronized (SYNCHRO) {
-            if(numOfReader == 0) {
+        if(numOfReader == 0) {
+            synchronized (SYNCHRO) {
                 SYNCHRO.notify();
             }
         }
