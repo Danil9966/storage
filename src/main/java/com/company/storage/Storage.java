@@ -21,16 +21,19 @@ public class Storage {
 
     @SneakyThrows
      public String getString() {
-        String result = new String(this.string) ;
         incNumOfReaders();
         TimeUnit.SECONDS.sleep(1);
-        decNumOfReaders();
-        if(numOfReader == 0) {
-            synchronized (SYNCHRO) {
-                SYNCHRO.notify();
+        try {
+            return string;
+        }
+        finally {
+            decNumOfReaders();
+            if(numOfReader == 0) {
+                synchronized (SYNCHRO) {
+                    SYNCHRO.notify();
+                }
             }
         }
-        return result;
     }
 
     void incNumOfReaders(){
